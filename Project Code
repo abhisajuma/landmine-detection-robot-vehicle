@@ -1,0 +1,62 @@
+#include <Servo.h>
+
+// Define pins
+const int metalDetectorPin = A0; // Analog pin for metal detector
+const int buzzerPin = 9;         // Pin for buzzer or LED
+const int motorLeftForward = 10; // Left motor forward pin
+const int motorLeftBackward = 11;// Left motor backward pin
+const int motorRightForward = 12;// Right motor forward pin
+const int motorRightBackward = 13;// Right motor backward pin
+
+// Threshold value for metal detection
+const int metalThreshold = 500;
+
+void setup() {
+  // Initialize motor control pins
+  pinMode(motorLeftForward, OUTPUT);
+  pinMode(motorLeftBackward, OUTPUT);
+  pinMode(motorRightForward, OUTPUT);
+  pinMode(motorRightBackward, OUTPUT);
+
+  // Initialize metal detector and buzzer
+  pinMode(metalDetectorPin, INPUT);
+  pinMode(buzzerPin, OUTPUT);
+
+  // Start serial communication for debugging
+  Serial.begin(9600);
+}
+
+void loop() {
+  // Read the value from the metal detector sensor
+  int metalDetectorValue = analogRead(metalDetectorPin);
+  Serial.println(metalDetectorValue);
+
+  // Check if the value exceeds the threshold
+  if (metalDetectorValue > metalThreshold) {
+    // Stop the motors
+    stopMotors();
+    // Sound the buzzer or light up the LED
+    digitalWrite(buzzerPin, HIGH);
+    delay(1000); // Alert for 1 second
+    digitalWrite(buzzerPin, LOW);
+  } else {
+    // Keep moving forward
+    moveForward();
+  }
+
+  delay(100); // Small delay for loop iteration
+}
+
+void moveForward() {
+  digitalWrite(motorLeftForward, HIGH);
+  digitalWrite(motorLeftBackward, LOW);
+  digitalWrite(motorRightForward, HIGH);
+  digitalWrite(motorRightBackward, LOW);
+}
+
+void stopMotors() {
+  digitalWrite(motorLeftForward, LOW);
+  digitalWrite(motorLeftBackward, LOW);
+  digitalWrite(motorRightForward, LOW);
+  digitalWrite(motorRightBackward, LOW);
+}
